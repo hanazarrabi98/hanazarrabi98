@@ -1,0 +1,58 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import qutip
+from qutip import destroy
+
+
+
+''Values';
+
+E_j_sigma = 20e9                                                                   #Josephson energy
+w = 5e9                                                                            # ω = (8*Ec*E_j_sigma)^1/2
+Delta = -300e6
+
+Number_of_steps = 1000
+phase = np.linspace(-np.pi,np.pi,Number_of_steps)
+
+PE_LC = 0.5*E_j_sigma*phase**2                                                    # Potential energy of the LC Oscillator 
+PE_LC = PE_LC/w
+
+PE_transmon = (E_j_sigma-E_j_sigma*np.cos(phase))                                 #Potential Energy of the transmon
+PE_transmon = PE_transmon/w
+
+import qutip
+from qutip import destroy
+
+N = 10
+max_energies_states = 5
+
+a = destroy(N)
+
+H_LC = w*a.dag()*a                                                    # Hamiltonian of the LC Oscillator 
+E_LC = H_LC.eigenenergies()[0:max_energies_states]                   #Find eigenenergies of the LC Oscillator 
+
+H_transmon = w*a.dag()*a + (Delta/2)*(a.dag()*a)*(a.dag()*a - 1)       #Hamiltonian of the transmon
+E_transmon = H_transmon.eigenenergies()[0:max_energies_states]         #Find eigenenergies of the transmon
+
+fig, axes = plt.subplots(1, 1, figsize=(10,10))
+
+axes.plot(phase, PE_transmon, '--', color='green', linewidth=3.0)     #If don't need, just  comment 
+axes.plot(phase, PE_LC, ':', color='gray', linewidth=3.0)             #If don't need, just  comment 
+
+for i in range(max_energies_states):
+    delta_E_LC = (E_LC[i]-E_LC[0])/w
+    delta_E_transmon = (E_transmon[i]-E_transmon[0])/w
+    LC_lim_idx = min(np.where(PE_LC[int((max_energies_states+1)/2):max_energies_states] > delta_E_LC)[0])
+    trans_lim_idx = min(np.where(PE_transmon[int((max_energies_states+1)/2):max_energies_states] > delta_E_transmon)[0])
+    trans_label, = axes.plot([phase[int((Number_of_steps+1)/2)-trans_lim_idx-1], phase[int((Number_of_steps+1)/2)+trans_lim_idx-1]], \
+                             [delta_E_transmon, delta_E_transmon], '--', color='green', linewidth=3.0)
+    LC_label, = axes.plot([phase[int((Number_of_steps+1)/2)-LC_lim_idx-1], phase[int((Number_of_steps+1)/2)+LC_lim_idx-1]], \
+                           [delta_E_LC, delta_E_LC], ':', color='gray', linewidth=3.0)
+    
+axes.set_xlabel('Phase $\phi$', fontsize=24)
+axes.set_ylabel('Energy Levels / $\hbar\omega$', fontsize=24)
+axes.set_ylim(-0.2,8)
+
+LC_label.set_label('LC resonator Energies')
+trans_label.set_label('Transmon Energies')
+axes.legend(loc=2, fontsize=14)
