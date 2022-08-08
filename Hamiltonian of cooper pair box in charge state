@@ -1,0 +1,24 @@
+import numpy as np
+from qutip import *
+
+
+#constants
+h = 6.62607015e-34 #J.Hz^-1
+e= 1.60217663e-19 #coulombs
+phi0 =h/2/e                             #phi0 = Φ_0
+hbar = h / 2/ np.pi
+print(phi0)
+print(hbar)
+
+
+def hamiltonian_CPB(Ec, Ej, N, ng):
+    H_CPB = np.diag(4 * Ec * (np.arange(-N,N+1)-ng)**2) + 0.5 * Ej * (np.diag(-np.ones(2*N), 1) + np.diag(-np.ones(2*N), -1))
+    return Qobj(H_CPB)
+    
+   
+Ec = 1e9*h
+Ej=0.01*Ec
+N=10
+ng = 0.5
+
+hamiltonian_CPB(Ec, Ej, N, ng)          #It is (2*N+1)(2*N+1) matrix
