@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @hanazarrabi98
 - 👀 I’m interested in superconducting qubits
 - 🌱 I’m currently learning qutip
-- 💞️ I am looking for the PhD position
+- 💞️ I am looking for new projects
 - 📫 My twitter account is https://twitter.com/Zhannaneh
 
 <!---
